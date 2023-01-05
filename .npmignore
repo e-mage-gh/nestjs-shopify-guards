@@ -1,0 +1,30 @@
+# source
+lib
+test
+coverage
+index.ts
+.eslintrc.js
+.nvmrc
+.prettierrc
+nest-cli.json
+package-lock.json
+tsconfig.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+
+# example
+example/
+
+# github
+.github
+CONTRIBUTING.md
+renovate.json
+.release-it.json
