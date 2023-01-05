@@ -1,6 +1,8 @@
 # NestJS guards which support Shopify HMAC verification
 
-This module implements Guards which verifies the HMAC signature of incoming requests from Shopify.
+This module implements Guards which verifies the HMAC signature of incoming requests from Shopify: 
+* `ShopifyAuthGuard` - verifies the HMAC signature of incoming auth requests from Shopify as described in the [Shopify documentation](https://shopify.dev/apps/auth/oauth/getting-started#step-2-verify-the-installation-request) and will throw an UnauthorizedException if it is invalid.
+* `ShopifyWebhookGuard` - verifies the HMAC signature of incoming webhook requests from Shopify as described in the [Shopify documentation](https://shopify.dev/apps/webhooks/getting-started#verify-webhook) and will throw an UnauthorizedException if it is invalid.
 
 ## Basic usage with all default
 
@@ -22,14 +24,26 @@ export class AppModule {}
 
 Then use the guard in your controller:
 ```typescript
-import { ShopifyAuthGuard } from '@e-mage/nestjs-shopify-guards';
+import { ShopifyAuthGuard, ShopifyWebhookGuard } from '@e-mage/nestjs-shopify-guards';
 
 @Controller()
 @UseGuards(ShopifyAuthGuard)
 export class AppController {
-    @Get()
+
+    // Guard will verify the HMAC signature of the request
+    // and will throw an UnauthorizedException if it is invalid
+    @UseGuards(ShopifyAuthGuard)
+    @Get('/auth')
     getHello(): string {
-        return 'Hello World!';
+      return this.appService.getHello();
+    }
+    
+    // Guard will verify the HMAC signature of the request
+    // and will throw an UnauthorizedException if it is invalid
+    @UseGuards(ShopifyWebhookGuard)
+    @Post('/webhook')
+    postHello(): string {
+      return this.appService.getHello();
     }
 }
 ```

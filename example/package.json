@@ -28,7 +28,7 @@
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
-    "@e-mage/nestjs-shopify-guards": "file:../e-mage-nestjs-shopify-guards-0.1.0.tgz",
+    "@e-mage/nestjs-shopify-guards": "file:../e-mage-nestjs-shopify-guards-0.0.2.tgz",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",

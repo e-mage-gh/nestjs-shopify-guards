@@ -1,16 +1,21 @@
 import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ShopifyAuthGuard } from '@e-mage/nestjs-shopify-guards';
+import {
+  ShopifyAuthGuard,
+  ShopifyWebhookGuard,
+} from '@e-mage/nestjs-shopify-guards';
 
 @Controller()
-@UseGuards(ShopifyAuthGuard)
 export class AppController {
   constructor(private readonly appService: AppService) {}
-  @Get()
+
+  @UseGuards(ShopifyAuthGuard)
+  @Get('/auth')
   getHello(): string {
     return this.appService.getHello();
   }
-  @Post()
+  @UseGuards(ShopifyWebhookGuard)
+  @Post('/webhook')
   postHello(): string {
     return this.appService.getHello();
   }

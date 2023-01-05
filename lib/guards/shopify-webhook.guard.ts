@@ -11,13 +11,13 @@ import {
 import { ConfigService } from '../config-service';
 
 /**
- * The guard verifies the HMAC signature of incoming GET auth requests from Shopify
+ * The guard verifies the HMAC signature of incoming POST Webhook requests from Shopify
  * and will throw an UnauthorizedException if it is invalid
  *
- * @see https://shopify.dev/apps/auth/oauth/getting-started#step-2-verify-the-installation-request
+ * @see https://shopify.dev/apps/webhooks/configuration/https#step-5-verify-the-webhook
  */
 @Injectable()
-export class ShopifyAuthGuard implements CanActivate {
+export class ShopifyWebhookGuard implements CanActivate {
   constructor(
     @Inject(ConfigService)
     private config: ConfigService,
@@ -28,23 +28,31 @@ export class ShopifyAuthGuard implements CanActivate {
    * @param context
    */
   canActivate(context: ExecutionContext): boolean {
-    const { query, method } = context.switchToHttp().getRequest();
+    const { headers, method, rawBody } = context.switchToHttp().getRequest();
 
-    // Allow all non-GET requests
-    if (method !== 'GET') {
+    // Allow all non-POST requests
+    if (method !== 'POST') {
       return true;
     }
 
-    // The HMAC cannot be validated without both
-    // the app secret and the HMAC query/parameter variable name
-    if (!this.config.get('apiSecretKey') || !this.config.get('queryHmac')) {
+    // The HMAC cannot be validated without rawBody
+    if (!rawBody) {
       throw new HttpException(
         'HMAC validation failed',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    const { [this.config.get('queryHmac')]: hmac, ...restQuery } = query;
+    // The HMAC cannot be validated without both
+    // the app secret and the HMAC header name
+    if (!this.config.get('apiSecretKey') || !this.config.get('headerHmac')) {
+      throw new HttpException(
+        'HMAC validation failed',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const { [this.config.get('headerHmac')]: hmac } = headers;
     // The HMAC cannot be validated without HMAC value
     if (!hmac) {
       throw new HttpException(
@@ -54,8 +62,8 @@ export class ShopifyAuthGuard implements CanActivate {
     }
 
     const digest = createHmac('sha256', this.config.get('apiSecretKey'))
-      .update(decodeURIComponent(new URLSearchParams(restQuery).toString()))
-      .digest('hex');
+      .update(rawBody)
+      .digest('base64');
 
     // The HMAC is valid if the digest matches the HMAC value
     if (hmac !== digest) {
