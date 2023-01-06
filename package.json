@@ -6,7 +6,7 @@
   "contributors": [
     {
       "name": "Tomasz Zwierzchoń",
-      "url": "https://www.e-mage.pl"
+      "url": "https://e-mage.pl"
     }
   ],
   "license": "MIT",
@@ -29,10 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+htps://github.com/tozwierz/nestjs-shopify-guards.git"
+    "url": "https://github.com/tozwierz/nestjs-shopify-guards.git"
   },
   "bugs": {
-    "url": "htps://github.com/tozwierz/nestjs-shopify-guards/issues"
+    "url": "https://github.com/tozwierz/nestjs-shopify-guards/issues"
   },
   "keywords": [
     "NestJs",
