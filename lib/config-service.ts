@@ -10,9 +10,6 @@ export class ConfigService {
   readonly options: ShopifyGuardsModuleOptions = {
     apiSecretKey: '',
     headerHmac: 'x-shopify-hmac-sha256',
-    headerShopDomain: 'shopify-shop-domain',
-    headerRequestId: 'shopify-request-id',
-    headerApiVersion: 'shopify-api-version',
     queryHmac: 'hmac',
   };
   constructor(
