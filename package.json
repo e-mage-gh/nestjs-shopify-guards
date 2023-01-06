@@ -1,6 +1,6 @@
 {
   "name": "@e-mage/nestjs-shopify-guards",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Nest.js Shopify guards",
   "author": "E-Mage Tomasz Zwierzchoń",
   "contributors": [
