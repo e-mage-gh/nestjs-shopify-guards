@@ -29,10 +29,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tozwierz/nestjs-shopify-guards.git"
+    "url": "https://github.com/e-mage-gh/nestjs-shopify-guards.git"
   },
   "bugs": {
-    "url": "https://github.com/tozwierz/nestjs-shopify-guards/issues"
+    "url": "https://github.com/e-mage-gh/nestjs-shopify-guards/issues"
   },
   "keywords": [
     "NestJs",
