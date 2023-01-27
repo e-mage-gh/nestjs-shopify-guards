@@ -31,15 +31,6 @@ describe('ConfigService', () => {
         expect(configService.get('headerHmac')).toEqual(
           'x-shopify-hmac-sha256',
         );
-        expect(configService.get('headerShopDomain')).toEqual(
-          'shopify-shop-domain',
-        );
-        expect(configService.get('headerRequestId')).toEqual(
-          'shopify-request-id',
-        );
-        expect(configService.get('headerApiVersion')).toEqual(
-          'shopify-api-version',
-        );
         expect(configService.get('queryHmac')).toEqual('hmac');
       });
     });
@@ -53,9 +44,6 @@ describe('ConfigService', () => {
               useValue: {
                 apiSecretKey: 'apiSecretKey',
                 headerHmac: 'headerHmac',
-                headerShopDomain: 'headerShopDomain',
-                headerRequestId: 'headerRequestId',
-                headerApiVersion: 'headerApiVersion',
                 queryHmac: 'queryHmac',
               },
             },
@@ -72,13 +60,6 @@ describe('ConfigService', () => {
 
       it('should return given values', () => {
         expect(configService.get('headerHmac')).toEqual('headerHmac');
-        expect(configService.get('headerShopDomain')).toEqual(
-          'headerShopDomain',
-        );
-        expect(configService.get('headerRequestId')).toEqual('headerRequestId');
-        expect(configService.get('headerApiVersion')).toEqual(
-          'headerApiVersion',
-        );
         expect(configService.get('queryHmac')).toEqual('queryHmac');
       });
     });
