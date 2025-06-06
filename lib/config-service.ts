@@ -12,6 +12,7 @@ export class ConfigService {
     headerHmac: 'x-shopify-hmac-sha256',
     queryHmac: 'hmac',
     timestampLeewaySec: 60 * 60 * 24,
+    shopRegex: /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/,
   };
   constructor(
     @Inject(SHOPIFY_GUARDS_MODULE_OPTIONS)

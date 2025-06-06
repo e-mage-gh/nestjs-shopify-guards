@@ -54,7 +54,7 @@ export class AppController {
 }
 ```
 ## You can also use the guards with custom options 
-You can change the default HMAC header name, the default HMAC query parameter name, or the allowed timestamp leeway:
+You can change the default HMAC header name, the default HMAC query parameter name, the allowed timestamp leeway, or the regex used to validate the `shop` domain:
 
 ```typescript
 import { ShopifyGuardsModule } from '@e-mage/nestjs-shopify-guards';
@@ -66,6 +66,7 @@ import { ShopifyGuardsModule } from '@e-mage/nestjs-shopify-guards';
             headerHmac: 'X-My-Shopify-Hmac-Sha256',
             queryHmac: 'my-hmac',
             timestampLeewaySec: 3600,
+            shopRegex: /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/,
         }),
     ],
     controllers: [AppController],
