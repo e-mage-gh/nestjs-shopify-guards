@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import {
   CanActivate,
   ExecutionContext,
@@ -65,14 +65,18 @@ export class ShopifyWebhookGuard implements CanActivate {
       .update(rawBody)
       .digest('base64');
 
-    // The HMAC is valid if the digest matches the HMAC value
-    if (hmac !== digest) {
+    const isValid =
+      typeof hmac === 'string' &&
+      hmac.length === digest.length &&
+      timingSafeEqual(Buffer.from(hmac), Buffer.from(digest));
+
+    if (!isValid) {
       throw new HttpException(
         'HMAC validation failed',
         HttpStatus.UNAUTHORIZED,
       );
-    } else {
-      return true;
     }
+
+    return true;
   }
 }

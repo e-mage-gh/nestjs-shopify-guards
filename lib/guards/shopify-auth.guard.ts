@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import {
   CanActivate,
   ExecutionContext,
@@ -53,18 +53,39 @@ export class ShopifyAuthGuard implements CanActivate {
       );
     }
 
+    const params = new URLSearchParams(restQuery as Record<string, string>);
+    params.sort();
     const digest = createHmac('sha256', this.config.get('apiSecretKey'))
-      .update(decodeURIComponent(new URLSearchParams(restQuery).toString()))
+      .update(decodeURIComponent(params.toString()))
       .digest('hex');
 
-    // The HMAC is valid if the digest matches the HMAC value
-    if (hmac !== digest) {
+    const isValid =
+      typeof hmac === 'string' &&
+      hmac.length === digest.length &&
+      timingSafeEqual(Buffer.from(hmac), Buffer.from(digest));
+
+    // timestamp validation as recommended by Shopify
+    const timestamp = parseInt(query.timestamp as string, 10);
+    const leeway = this.config.get('timestampLeewaySec') ?? 0;
+    const now = Date.now() / 1000;
+    const isTimestampValid =
+      !timestamp ||
+      (Number.isFinite(timestamp) && now - timestamp <= Number(leeway));
+
+    if (!isValid) {
       throw new HttpException(
         'HMAC validation failed',
         HttpStatus.UNAUTHORIZED,
       );
-    } else {
-      return true;
     }
+
+    if (!isTimestampValid) {
+      throw new HttpException(
+        'HMAC timestamp expired',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    return true;
   }
 }

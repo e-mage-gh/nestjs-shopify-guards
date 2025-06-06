@@ -11,6 +11,7 @@ export class ConfigService {
     apiSecretKey: '',
     headerHmac: 'x-shopify-hmac-sha256',
     queryHmac: 'hmac',
+    timestampLeewaySec: 60 * 60 * 24,
   };
   constructor(
     @Inject(SHOPIFY_GUARDS_MODULE_OPTIONS)
@@ -23,7 +24,9 @@ export class ConfigService {
    * Config getter
    * @param key
    */
-  get(key: string): string {
+  get<K extends keyof ShopifyGuardsModuleOptions>(
+    key: K,
+  ): ShopifyGuardsModuleOptions[K] {
     return this.options[key];
   }
 }
