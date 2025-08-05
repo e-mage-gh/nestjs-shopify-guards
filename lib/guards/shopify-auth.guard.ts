@@ -59,29 +59,20 @@ export class ShopifyAuthGuard implements CanActivate {
       .update(decodeURIComponent(params.toString()))
       .digest('hex');
 
-    const isValid =
+    const isValidHmac =
       typeof hmac === 'string' &&
       hmac.length === digest.length &&
       timingSafeEqual(Buffer.from(hmac), Buffer.from(digest));
-
-    const shop = query.shop as string;
-    const shopRegex = this.config.get('shopRegex');
-
-    // timestamp validation as recommended by Shopify
-    const timestamp = parseInt(query.timestamp as string, 10);
-    const leeway = this.config.get('timestampLeewaySec') ?? 0;
-    const now = Date.now() / 1000;
-    const isTimestampValid =
-      !timestamp ||
-      (Number.isFinite(timestamp) && Math.abs(now - timestamp) <= Number(leeway));
-
-    if (!isValid) {
+    if (!isValidHmac) {
       throw new HttpException(
         'HMAC validation failed',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
+    // Shop validation
+    const shop = query.shop as string;
+    const shopRegex = this.config.get('shopRegex');
     if (shop && shopRegex && !shopRegex.test(shop)) {
       throw new HttpException(
         'Shop parameter invalid',
@@ -89,13 +80,20 @@ export class ShopifyAuthGuard implements CanActivate {
       );
     }
 
+    // Timestamp validation as recommended by Shopify
+    const timestamp = parseInt(query.timestamp as string, 10);
+    const leeway = this.config.get('timestampLeewaySec') ?? 0;
+    const now = Date.now() / 1000;
+    const isTimestampValid =
+      !timestamp ||
+      (Number.isFinite(timestamp) && Math.abs(now - timestamp) <= Number(leeway));
     if (!isTimestampValid) {
       throw new HttpException(
         'HMAC timestamp expired',
         HttpStatus.UNAUTHORIZED,
       );
     }
-
+    
     return true;
   }
 }
