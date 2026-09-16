@@ -1,7 +1,7 @@
 # NestJS guards for Shopify HMAC verification
 
 This module implements Guards which verifies the HMAC signature of incoming requests from Shopify: 
-* `ShopifyAuthGuard` - verifies the HMAC signature of incoming Auth requests from Shopify as described in the [Shopify documentation](https://shopify.dev/apps/auth/oauth/getting-started#step-2-verify-the-installation-request) and will throw an UnauthorizedException if it is invalid.
+* `ShopifyAuthGuard` - verifies the HMAC signature of incoming Auth requests from Shopify as described in the [Shopify documentation](https://shopify.dev/apps/auth/oauth/getting-started#step-2-verify-the-installation-request) and will throw an UnauthorizedException if it is invalid. It also checks that the provided `timestamp` parameter is recent to prevent replay attacks.
 * `ShopifyWebhookGuard` - verifies the HMAC signature of incoming Webhook requests from Shopify as described in the [Shopify documentation](https://shopify.dev/apps/webhooks/getting-started#verify-webhook) and will throw an UnauthorizedException if it is invalid.
 
 ## Basic usage with all default
@@ -54,7 +54,7 @@ export class AppController {
 }
 ```
 ## You can also use the guards with custom options 
-You can change the default hmac header name or the default hmac query parameter name:
+You can change the default HMAC header name, the default HMAC query parameter name, the allowed timestamp leeway, or the regex used to validate the `shop` domain:
 
 ```typescript
 import { ShopifyGuardsModule } from '@e-mage/nestjs-shopify-guards';
@@ -63,8 +63,10 @@ import { ShopifyGuardsModule } from '@e-mage/nestjs-shopify-guards';
     imports: [
         ShopifyGuardsModule.register({
             apiSecretKey: 'my_client_secret',
-            hmacHeaderName: 'X-My-Shopify-Hmac-Sha256',
-            hmacQueryParameterName: 'my-hmac',
+            headerHmac: 'X-My-Shopify-Hmac-Sha256',
+            queryHmac: 'my-hmac',
+            timestampLeewaySec: 3600,
+            shopRegex: /^[a-zA-Z0-9][a-zA-Z0-9-]*\.myshopify\.com$/,
         }),
     ],
     controllers: [AppController],
